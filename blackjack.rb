@@ -1,10 +1,11 @@
 require './deck.rb'
 
 class Blackjack
-  ACE_VALUE_LOW   = 1
-  ACE_VALUE_HIGH  = 11
-  FACE_CARD_VALUE = 10
-  BLACKJACK_VALUE = 21
+  ACE_VALUE_LOW     = 1
+  ACE_VALUE_HIGH    = 11
+  FACE_CARD_VALUE   = 10
+  BLACKJACK_VALUE   = 21
+  HOUSE_HOLD_AMOUNT = 17
 
   def initialize(number_of_decks: 1)
     @game_deck    = generate_game_deck(number_of_decks)
@@ -54,7 +55,7 @@ class Blackjack
   end
 
   def play_dealers_hand
-    if card_hand_sum(@current_hand[:house]) < 17
+    if card_hand_sum(@current_hand[:house]) < HOUSE_HOLD_AMOUNT
       deal_card(:house)
       display_status_full
       return busted?(:house) if busted?(:house)
@@ -65,9 +66,9 @@ class Blackjack
   end
 
   def play_players_hand
-
     puts "Hit or Stand?"
     response = gets.chomp.downcase
+
     if response == "h"
       deal_card(:player)
       display_status_hidden_dealer_card
@@ -110,7 +111,7 @@ class Blackjack
   end
 
   def busted?(target)
-    if card_hand_sum(@current_hand[target]) > 21
+    if card_hand_sum(@current_hand[target]) > BLACKJACK_VALUE
       return true
     end
 
@@ -128,7 +129,7 @@ class Blackjack
         ( (sum + ACE_VALUE_HIGH) <= BLACKJACK_VALUE ) ? sum += ACE_VALUE_HIGH : sum += ACE_VALUE_LOW
         has_ace = true
       else
-        sum += 10
+        sum += FACE_CARD_VALUE
       end
     end
 
