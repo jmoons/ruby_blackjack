@@ -120,22 +120,27 @@ class Blackjack
 
   def card_hand_sum(card_hand)
     sum     = 0
-    has_ace = false
+    has_high_ace = false
 
     card_hand.each do |card|
       if (card.number.is_a? Numeric)
         sum += card.number
       elsif (card.number.downcase == "ace")
-        ( (sum + ACE_VALUE_HIGH) <= BLACKJACK_VALUE ) ? sum += ACE_VALUE_HIGH : sum += ACE_VALUE_LOW
-        has_ace = true
+        if (sum + ACE_VALUE_HIGH) <= BLACKJACK_VALUE
+          sum += ACE_VALUE_HIGH
+          has_high_ace = true
+        else
+          sum += ACE_VALUE_LOW
+        end
       else
         sum += FACE_CARD_VALUE
       end
     end
 
-    if (sum > BLACKJACK_VALUE && has_ace)
+    if (sum > BLACKJACK_VALUE && has_high_ace)
       sum -= ACE_VALUE_HIGH
       sum += ACE_VALUE_LOW
+      has_high_ace = false
     end
 
     sum
