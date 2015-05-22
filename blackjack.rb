@@ -95,17 +95,17 @@ class Blackjack
   end
 
   def display_status_full
-    puts "YOU: #{@current_hand[:player]}"
+    puts "You: #{@current_hand[:player].map{|card| "#{card.number}-#{card.suit}"}}"
     puts "YOU: #{card_hand_sum(@current_hand[:player])}"
-    puts "House: #{@current_hand[:house].inspect}"
+    puts "House: #{@current_hand[:house].map{|card| "#{card.number}-#{card.suit}"}}"
     puts "House: #{card_hand_sum(@current_hand[:house])}"
 
   end
 
   def display_status_hidden_dealer_card
-    puts "YOU: #{@current_hand[:player]}"
+    puts "You: #{@current_hand[:player].map{|card| "#{card.number}-#{card.suit}"}}"
     puts "YOU: #{card_hand_sum(@current_hand[:player])}"
-    puts "House: #{[@current_hand[:house][1]].inspect}"
+    puts "House: #{[@current_hand[:house][1]].map{|card| "#{card.number}-#{card.suit}"}}"
     puts "House: #{card_hand_sum([@current_hand[:house][1]])}"
 
   end
