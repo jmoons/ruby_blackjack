@@ -50,6 +50,8 @@ class Blackjack
   def determine_winner
     if ( card_hand_sum(@current_hand[:player]) > card_hand_sum(@current_hand[:house]) )
       puts "Player Wins!"
+    elsif ( card_hand_sum(@current_hand[:player]) == card_hand_sum(@current_hand[:house]) )
+      puts "Push - No winner, no loser. How Zen."
     else
       puts "House Wins - DOH"
     end
