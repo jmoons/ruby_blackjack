@@ -1,5 +1,10 @@
 require './deck.rb'
 
+class BustedException < RuntimeError
+  def initialize
+  end
+end
+
 class Blackjack
   ACE_VALUE_LOW     = 1
   ACE_VALUE_HIGH    = 11
@@ -19,21 +24,21 @@ class Blackjack
 
   def play_hand
     deal_initial_cards
-    # Show cards
-    # Prompt user for action
-    # Hit - deal a card
-    # Stand - play dealers hand
+
     display_status_hidden_dealer_card
 
-    if play_players_hand
-      #player busted
+    begin
+      play_players_hand
+    rescue BustedException
       print_busted_message("player")
       return
     end
 
     display_status_full
 
-    if play_dealers_hand
+    begin
+      play_dealers_hand
+    rescue BustedException
       print_busted_message("dealer")
       return
     end
@@ -58,7 +63,7 @@ class Blackjack
     if card_hand_sum(@current_hand[:house]) < HOUSE_HOLD_AMOUNT
       deal_card(:house)
       display_status_full
-      return busted?(:house) if busted?(:house)
+      raise BustedException.new if busted?(:house)
       play_dealers_hand
     else
       return false
@@ -72,7 +77,7 @@ class Blackjack
     if response == "h"
       deal_card(:player)
       display_status_hidden_dealer_card
-      return busted?(:player) if busted?(:player)
+      raise BustedException.new if busted?(:player)
       play_players_hand
     elsif response == "s"
       return false
