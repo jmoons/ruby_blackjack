@@ -11,18 +11,52 @@ class Blackjack
   FACE_CARD_VALUE   = 10
   BLACKJACK_VALUE   = 21
   HOUSE_HOLD_AMOUNT = 17
+  RESHUFFLE_TRIGGER  = 0.3
 
   def initialize(number_of_decks: 1)
-    @game_deck    = generate_game_deck(number_of_decks)
-    @mutable_deck = @game_deck.dup
-    @keep_playing = true
-    @current_hand = {:player => [], :house => []}
-    play_hand
+    @number_of_decks  = number_of_decks
+    @keep_playing     = true
+
+    begin_session
   end
   
   private
 
+  def begin_session
+    reshuffle
+    while @keep_playing do
+      puts "Deck Stats - TotalCards: #{@game_deck.length}, RemainingCards: #{@mutable_deck.length}, Div: #{(@mutable_deck.length / @game_deck.length.to_f)}"
+      reshuffle if check_for_reshuffle
+      play_hand
+      check_to_continue
+    end
+  end
+
+  def check_to_continue
+    puts "Play Again (y or n)?"
+    response = gets.chomp.downcase
+
+    if response == "n"
+      @keep_playing = false
+    elsif response == "y"
+      return
+    else
+      check_to_continue
+    end
+  end
+
+  def check_for_reshuffle
+    (@mutable_deck.length / @game_deck.length.to_f) <= RESHUFFLE_TRIGGER
+  end
+
+  def reshuffle
+    puts "RESHUFFLING!"
+    @game_deck    = generate_game_deck(@number_of_decks)
+    @mutable_deck = @game_deck.dup
+  end
+
   def play_hand
+    @current_hand = {:player => [], :house => []}
     deal_initial_cards
 
     display_status_hidden_dealer_card
