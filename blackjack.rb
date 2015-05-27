@@ -3,9 +3,11 @@ require './deck.rb'
 class BustedException < RuntimeError
   def initialize
   end
+
 end
 
 class Blackjack
+
   ACE_VALUE_LOW     = 1
   ACE_VALUE_HIGH    = 11
   FACE_CARD_VALUE   = 10
@@ -16,7 +18,7 @@ class Blackjack
   def initialize(number_of_decks: 1)
     @number_of_decks  = number_of_decks
     @keep_playing     = true
-
+    @session_stats    = {:player_wins => 0, :house_wins => 0, :pushes => 0}
     begin_session
   end
   
@@ -28,8 +30,18 @@ class Blackjack
       puts "Deck Stats - TotalCards: #{@game_deck.length}, RemainingCards: #{@mutable_deck.length}, Div: #{(@mutable_deck.length / @game_deck.length.to_f)}"
       reshuffle if check_for_reshuffle
       play_hand
+      display_session_stats
       check_to_continue
     end
+  end
+
+  def display_session_stats
+    puts "==================================="
+    puts "Player Wins: #{@session_stats[:player_wins]}"
+    puts "House Wins:  #{@session_stats[:house_wins]}"
+    puts "Pushes:      #{@session_stats[:pushes]}"
+    puts "==================================="
+
   end
 
   def check_to_continue
@@ -64,6 +76,7 @@ class Blackjack
     begin
       play_players_hand
     rescue BustedException
+      @session_stats[:house_wins] += 1
       print_busted_message("player")
       return
     end
@@ -73,6 +86,7 @@ class Blackjack
     begin
       play_dealers_hand
     rescue BustedException
+      @session_stats[:player_wins] += 1
       print_busted_message("dealer")
       return
     end
@@ -83,10 +97,13 @@ class Blackjack
 
   def determine_winner
     if ( card_hand_sum(@current_hand[:player]) > card_hand_sum(@current_hand[:house]) )
+      @session_stats[:player_wins] += 1
       puts "Player Wins!"
     elsif ( card_hand_sum(@current_hand[:player]) == card_hand_sum(@current_hand[:house]) )
+      @session_stats[:pushes] += 1
       puts "Push - No winner, no loser. How Zen."
     else
+      @session_stats[:house_wins] += 1
       puts "House Wins - DOH"
     end
   end
