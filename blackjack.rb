@@ -1,4 +1,3 @@
-# Okay, lets check out the new key
 require './deck.rb'
 
 class BustedException < RuntimeError
